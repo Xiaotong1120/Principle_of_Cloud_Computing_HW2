@@ -165,7 +165,7 @@ After running the pipeline, the project will generate a file `latency_results.tx
 
 The work is assigned across the team, and we use a Slack channel as our primary communication tool.
 
-### Virtual Machine and Ansible Setup - Xiaotong 'Brandon' Ma, Sparsh Amarnani
+### Virtual Machine and Ansible Setup - Xiaotong 'Brandon' Ma, Sparsh Amarnani, Arpit Ojha
 - Automated the deployment of the VMs and necessary services using **Ansible**.
 - Configured four virtual machines (VM1, VM2, VM3, VM4) to handle the different components of the project.
 - Created playbooks for setting up Docker, Kafka, and Python environments across all VMs.
