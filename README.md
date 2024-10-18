@@ -11,7 +11,7 @@ The project is composed of several key components:
 - **Inference Service**: Receives images, performs machine learning inference using a pre-trained ResNet model, and sends the result back to Kafka.
 - **Consumer**: Consumes the inference results and calculates the end-to-end latency for each image.
   
-The entire system is containerized using Docker, and the setup is automated with Ansible.
+The virtual machines setup is automated with Ansible and the services are run in the docker container.
 
 ## Project Structure
 
@@ -23,19 +23,14 @@ The entire system is containerized using Docker, and the setup is automated with
 - `Dockerfile`: Dockerfile for building the application image.
 - `requirements.txt`: Lists the Python dependencies for the project.
 
-## Prerequisites
-
-- **Ansible**: To automate the setup of VMs and Docker services.
-- **Docker & Docker Compose**: To containerize the producer, inference, and Kafka services.
-- **Chameleon Cloud**: Or any cloud provider to provision VMs (this setup uses Chameleon).
-
 ### Key Features:
-- **VM1**: Acts as an IoT data producer, sending CIFAR-10 images to a Kafka broker every 10 seconds.
-- **VM2**: Acts as the Kafka broker, facilitating message transmission between producer and consumers.
-- **VM3**: Acts as a consumer, performing image classification (machine learning inference) on received images and sending the predictions to a Kafka topic.
-- **VM4**: Listens for both raw images and prediction results, storing them in **CouchDB**.
+- **VM1**: Acts as an IoT data producer, sending CIFAR-10 images to a Kafka broker.
+- **VM2**: Acts as the Kafka broker, facilitating message transmission between producer and consumers. It also serves as the second producer.
+- **VM3**: Acts as a consumer, performing image classification (machine learning inference) on received images and sending the predictions to a Kafka topic to database. It also sends the response back to the producers to count the time latency. Serves as the third producer.
+- **VM4**: Listens for both raw images and prediction results, storing them in **CouchDB**. It also serves as the forth producer.
 
 ### Tools & Libraries:
+- **Ansible**: For virtual machine automated creation.
 - **Apache Kafka**: For message streaming between VMs.
 - **PyTorch**: For image classification using pre-trained models.
 - **CouchDB**: A NoSQL database to store image data and classification results.
@@ -80,8 +75,8 @@ ansible-playbook -i inventory_file -e "@variables.yaml" playbook_master.yaml
 
 The playbook will:
 - Create VMs.
-- Install Docker and Docker Compose.
-- Configure the environment for running the Docker services.
+- Install necessary packages, Kafka, Zookeeper, Docker, Docker Compose.
+- Configure the environment for running the Kafka and Docker services.
 
 ### Step 2: Build and Run Docker Services on VMs
 
@@ -96,7 +91,11 @@ ssh user@<vm_ip_address>
 Navigate to the directory where the `docker-compose.yaml` file is located and run:
 
 ```bash
-docker-compose up --build
+docker-compose build
+```
+
+```bash
+docker-compose up
 ```
 
 This command will:
@@ -157,28 +156,30 @@ This histogram shows the distribution of end-to-end latency for the messages.
 - `playbook_master.yaml`: Ansible playbook to automate VM and Docker setup.
 - `requirements.txt`: Python dependencies.
 
-## Dependencies
-
-The following Python packages are required:
-
-```bash
-numpy
-pandas
-flask
-kafka-python
-torch
-torchvision
-requests
-couchdb
-matplotlib
-```
-
-Install these using:
-
-```bash
-pip install -r requirements.txt
-```
-
 ## Results
 
 After running the pipeline, the project will generate a file `latency_results.txt` with latency data for each image. A latency histogram will also be generated and saved as `latency_histogram.png`.
+
+
+# Documentation of Work Split Among Team
+
+The work is assigned across the team, and we use a Slack channel as our primary communication tool.
+
+### Virtual Machine and Ansible Setup - Xiaotong 'Brandon' Ma, Sparsh Amarnani
+- Automated the deployment of the VMs and necessary services using **Ansible**.
+- Configured four virtual machines (VM1, VM2, VM3, VM4) to handle the different components of the project.
+- Created playbooks for setting up Docker, Kafka, and Python environments across all VMs.
+- Installed and configured necessary software, including **Apache Kafka**, **Zookeeper**, **CouchDB**, **Python** with required libraries, and **PyTorch** for machine learning.
+- Set up Python environments on all VMs, ensuring **kafka-python**, **torch**, **Pillow**, **couchdb**, and other dependencies were installed and working correctly.
+- Verified network connectivity and proper communication between VMs.
+
+### Image Producer - Xiaotong 'Brandon' Ma, Arpit Ojha
+- Developed a **Kafka producer** to stream CIFAR-10 images to Kafka.
+- Implemented image processing, converting images to base64 and sending them to the Kafka broker.
+
+### Docker Setup - Xiaotong 'Brandon' Ma
+- Develop docker files to launch docker environments.
+- Make requirements.txt and Dockerfile to create customized docker image.
+
+### Testing and Documentation - Xiaotong 'Brandon' Ma, Sparsh Amarnani, Arpit Ojha
+- Tested the entire system for smooth communication and data flow.
