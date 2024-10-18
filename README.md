@@ -19,6 +19,16 @@ The virtual machines setup is automated with Ansible and the services are run in
 - **VM3**: Acts as a consumer, performing image classification (machine learning inference) on received images and sending the predictions to a Kafka topic to database. It also sends the response back to the producers to count the time latency. Serves as the third producer.
 - **VM4**: Listens for both raw images and prediction results, storing them in **CouchDB**. It also serves as the forth producer.
 
+## Files Description
+
+- `producer.py`: Sends images to Kafka and listens for inference results to compute latency.
+- `inference.py`: Performs image inference using a pre-trained ResNet model and sends results to Kafka.
+- `consumer.py`: Listens for inference results and processes them.
+- `Dockerfile`: Defines the image setup for the producer, inference, and consumer services.
+- `docker-compose.yaml`: Docker Compose configuration to run Kafka, Zookeeper, and the application services.
+- `playbook_master.yaml`: Ansible playbook to automate VM and Docker setup.
+- `requirements.txt`: Python dependencies.
+
 ### Tools & Libraries:
 - **Ansible**: For virtual machine automated creation.
 - **Apache Kafka**: For message streaming between VMs.
@@ -135,16 +145,6 @@ python producer.py
 ```
 
 This histogram shows the distribution of end-to-end latency for the messages.
-
-## Files Description
-
-- `producer.py`: Sends images to Kafka and listens for inference results to compute latency.
-- `inference.py`: Performs image inference using a pre-trained ResNet model and sends results to Kafka.
-- `consumer.py`: Listens for inference results and processes them.
-- `Dockerfile`: Defines the image setup for the producer, inference, and consumer services.
-- `docker-compose.yaml`: Docker Compose configuration to run Kafka, Zookeeper, and the application services.
-- `playbook_master.yaml`: Ansible playbook to automate VM and Docker setup.
-- `requirements.txt`: Python dependencies.
 
 ## Results
 
