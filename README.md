@@ -75,7 +75,7 @@ Ensure that your Ansible environment is configured with access to the cloud prov
 Run the Ansible playbook to create the necessary VMs and install required packages (Docker, Python, etc.):
 
 ```bash
-ansible-playbook playbook_master.yaml
+ansible-playbook -i inventory_file -e "@variables.yaml" playbook_master.yaml
 ```
 
 The playbook will:
