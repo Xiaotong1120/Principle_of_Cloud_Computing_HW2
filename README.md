@@ -13,16 +13,6 @@ The project is composed of several key components:
   
 The virtual machines setup is automated with Ansible and the services are run in the docker container.
 
-## Project Structure
-
-- `producer.py`: Sends images to Kafka and starts a thread to listen for inference results.
-- `inference.py`: Performs inference on the received images and sends results to Kafka.
-- `consumer.py`: Consumes results from Kafka and handles data processing.
-- `docker-compose.yaml`: Defines the Docker services for Kafka, Zookeeper, and the application containers.
-- `playbook_master.yaml`: Ansible playbook for setting up VMs and Docker services.
-- `Dockerfile`: Dockerfile for building the application image.
-- `requirements.txt`: Lists the Python dependencies for the project.
-
 ### Key Features:
 - **VM1**: Acts as an IoT data producer, sending CIFAR-10 images to a Kafka broker.
 - **VM2**: Acts as the Kafka broker, facilitating message transmission between producer and consumers. It also serves as the second producer.
