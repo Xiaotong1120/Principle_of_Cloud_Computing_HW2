@@ -29,6 +29,41 @@ The entire system is containerized using Docker, and the setup is automated with
 - **Docker & Docker Compose**: To containerize the producer, inference, and Kafka services.
 - **Chameleon Cloud**: Or any cloud provider to provision VMs (this setup uses Chameleon).
 
+### Key Features:
+- **VM1**: Acts as an IoT data producer, sending CIFAR-10 images to a Kafka broker every 10 seconds.
+- **VM2**: Acts as the Kafka broker, facilitating message transmission between producer and consumers.
+- **VM3**: Acts as a consumer, performing image classification (machine learning inference) on received images and sending the predictions to a Kafka topic.
+- **VM4**: Listens for both raw images and prediction results, storing them in **CouchDB**.
+
+### Tools & Libraries:
+- **Apache Kafka**: For message streaming between VMs.
+- **PyTorch**: For image classification using pre-trained models.
+- **CouchDB**: A NoSQL database to store image data and classification results.
+- **Python Libraries**:
+  - `kafka-python`: Kafka producer and consumer.
+  - `torch` and `timm`: For machine learning inference.
+  - `Pillow`: For image processing.
+  - `base64`: For image encoding/decoding.
+  - `couchdb`: For interacting with the CouchDB database.
+  
+### Machine Learning Model
+
+For image classification, we use a pre-trained **ResNet-20** model from **PyTorch Hub**, specifically designed for the **CIFAR-10** dataset. The model is loaded using the following command:
+
+```python
+model = torch.hub.load('chenyaofo/pytorch-cifar-models', 'cifar10_resnet20', pretrained=True)
+```
+
+**ResNet-20** is a well-optimized model for CIFAR-10 and provides a good balance between computational efficiency and accuracy for small image sizes like 32x32 pixels. It utilizes residual connections to mitigate the vanishing gradient problem commonly found in deep networks.
+
+### Why ResNet-20?
+
+- **Tailored for CIFAR-10**: This model is specifically designed and trained for the CIFAR-10 dataset, making it highly suitable for classifying its small image sizes.
+- **Computational Efficiency**: ResNet-20 offers a good balance between accuracy and computational speed.
+- **Residual Connections**: These connections allow the model to train deeper networks effectively without running into the vanishing gradient problem.
+
+Using this pre-trained model allows us to achieve reasonable classification performance without needing extensive training on the CIFAR-10 dataset.
+
 ## Setup Instructions
 
 ### Step 1: Setup VMs using Ansible
