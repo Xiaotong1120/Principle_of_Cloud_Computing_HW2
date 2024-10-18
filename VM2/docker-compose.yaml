@@ -1,0 +1,23 @@
+version: '3'
+services:
+  producer:
+    build: .  # 使用 Dockerfile 来构建镜像
+    container_name: producer_container
+    volumes:
+      - ./:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    environment:
+      KAFKA_BROKER: "192.168.5.36:9092"  # Update with correct Kafka broker VM IP
+    networks:
+      - external_net
+    ports:
+      - "8080:8080"  # 示例端口映射, 根据需要设置
+    logging:
+      driver: "json-file"
+    command: /bin/bash  # 让容器启动后只进入 Bash，等待你的指令
+
+networks:
+  external_net:
+    driver: bridge

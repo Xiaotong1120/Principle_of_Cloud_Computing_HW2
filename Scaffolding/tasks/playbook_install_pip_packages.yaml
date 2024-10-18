@@ -1,0 +1,14 @@
+---
+- name: "Install pip packages for cloud VMs"
+  ansible.builtin.pip:
+    name:
+      - numpy
+      - pandas
+      - flask
+      - kafka-python
+      - torch
+      - torchvision
+      - requests
+    state: present
+  become: yes
+  become_user: root

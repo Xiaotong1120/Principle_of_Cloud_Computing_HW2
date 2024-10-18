@@ -1,0 +1,53 @@
+version: '3'
+services:
+  producer:
+    build: .
+    container_name: producer_container
+    volumes:
+      - ./:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    environment:
+      KAFKA_BROKER: "192.168.1.36:9092"  # Update with correct Kafka broker VM IP
+    networks:
+      - external_net
+    logging:
+      driver: "json-file"
+
+  consumer:
+    build: .
+    container_name: consumer_container
+    volumes:
+      - ./:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    environment:
+      KAFKA_BROKER: "192.168.1.36:9092"  # Update with correct Kafka broker VM IP
+      COUCHDB_HOST: "http://192.168.1.58:5984"  # Update with CouchDB VM IP
+      COUCHDB_USER: "admin"
+      COUCHDB_PASSWORD: "admin"
+    networks:
+      - external_net
+    depends_on:
+      - couchdb
+    logging:
+      driver: "json-file"
+
+  couchdb:
+    image: couchdb:3.1
+    container_name: couchdb_container
+    ports:
+      - "5984:5984"  # Expose CouchDB port
+    networks:
+      - external_net
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: admin
+    logging:
+      driver: "json-file"
+
+networks:
+  external_net:
+    driver: bridge  # Ensure the external network exists

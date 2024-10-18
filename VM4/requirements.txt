@@ -1,0 +1,9 @@
+numpy
+pandas
+flask
+kafka-python
+torch
+torchvision
+requests
+couchdb
+matplotlib
